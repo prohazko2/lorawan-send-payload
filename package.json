@@ -1,0 +1,23 @@
+{
+  "name": "lorawan-device-simulator",
+  "version": "1.0.0",
+  "description": "Simple LoRaWAN device simulator with OTAA and Class A support",
+  "main": "src/simulator.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types src/simulator.ts"
+  },
+  "keywords": [
+    "lorawan",
+    "simulator",
+    "packet-forwarder"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
