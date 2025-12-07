@@ -49,9 +49,9 @@ cp config.example.json config.json
 - `appKey` - Application Key в hex формате (32 символа)
 - `uplinkFPort` - FPort для uplink сообщений (по умолчанию, если не указан в uplink.ts)
 - `uplinkInterval` - интервал отправки uplink сообщений в миллисекундах
-- `frequencyPlan` - частотный план (EU868, RU864, US915, AS923-1, AS923-2, AS923-3, AS923-4, CN470, IN865, KR920)
-- `debug.udp` - включить отладку UDP пакетов
-- `debug.lora` - включить отладку LoRaWAN пакетов
+- `frequencyPlan` - частотный план (RU864, EU868), остальные не проверялись
+- `debug.udp` - отладка UDP пакетов
+- `debug.lora` - отладка LoRaWAN пакетов
 
 ## Запуск
 
