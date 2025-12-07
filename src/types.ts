@@ -6,7 +6,11 @@ export interface DebugConfig {
   lora: boolean;
 }
 
-// Интерфейсы для конфигурации и состояния
+export interface UplinkMessage {
+  fPort: number;
+  payload: Buffer;
+}
+
 export interface DeviceConfig {
   debug: DebugConfig;
   gatewayHost: string;
@@ -30,6 +34,8 @@ export interface DeviceState {
   activated: boolean;
   rx1Delay: number;
   rx2Delay: number;
+
+  vars: Record<string, any>;
 }
 
 export interface PacketForwarderRxpk {
@@ -58,4 +64,3 @@ export interface PacketForwarderMessage {
   txpk?: PacketForwarderTxpk;
   stat?: any;
 }
-

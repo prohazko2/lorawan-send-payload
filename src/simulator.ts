@@ -17,16 +17,21 @@ import {
 } from "./packet-forwarder.ts";
 
 import type { FrequencyPlan } from "./frequency-plans.ts";
+import type { UplinkMessage } from "./types.ts";
+
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 
-function defaultPayloadGenerator(): Buffer {
-  return Buffer.from(`hello: ${new Date().toISOString()}`);
+function defaultPayloadGenerator(): UplinkMessage {
+  return {
+    fPort: config.uplinkFPort,
+    payload: Buffer.from(`${new Date().toISOString()}`),
+  };
 }
 
-let payloadGenerator: (() => Buffer) | null = null;
+let payloadGenerator: (() => UplinkMessage) | null = null;
 let payloadGeneratorLoaded = false;
 
-async function loadPayloadGenerator(): Promise<() => Buffer> {
+async function loadPayloadGenerator(): Promise<() => UplinkMessage> {
   if (payloadGeneratorLoaded) {
     return payloadGenerator || defaultPayloadGenerator;
   }
@@ -35,11 +40,8 @@ async function loadPayloadGenerator(): Promise<() => Buffer> {
 
   try {
     const payloadModule = await import("../uplink.ts");
-    if (
-      payloadModule &&
-      typeof payloadModule.generateUplinkPayload === "function"
-    ) {
-      payloadGenerator = payloadModule.generateUplinkPayload;
+    if (payloadModule && typeof payloadModule.generateUplink === "function") {
+      payloadGenerator = payloadModule.generateUplink;
       console.log("✓ Custom uplink payload generator loaded");
       return payloadGenerator;
     }
@@ -58,14 +60,14 @@ export async function sendUplink(frequencyPlan: FrequencyPlan) {
     return;
   }
   const generator = await loadPayloadGenerator();
-  const payload = generator();
-  const phyPayload = createDataUplink(payload);
+  const { fPort, payload } = generator();
+  const phyPayload = createDataUplink(payload, fPort);
   if (phyPayload) {
     const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
     console.log(
       `Sending uplink (FCnt: ${
         deviceState.fCntUp - 1
-      }, Freq: ${uplinkFreq} MHz): ${payload.toString()}`
+      }, FPort: ${fPort}, Freq: ${uplinkFreq} MHz): ${payload.toString()}`
     );
     sendPushData(
       phyPayload,
@@ -77,9 +79,7 @@ export async function sendUplink(frequencyPlan: FrequencyPlan) {
   }
 }
 
-// Инициализация
 export async function _start() {
-  // Получаем частотный план
   const frequencyPlan = getFrequencyPlan(config.frequencyPlan);
   if (!frequencyPlan) {
     console.error(`Error: Unknown frequency plan '${config.frequencyPlan}'`);
@@ -127,13 +127,10 @@ export async function _start() {
   }, config.uplinkInterval);
 }
 
-// Настройка обработчика сообщений
 setupMessageHandler(async (phyPayload: Buffer) => {
-  // Обработка downlink
   if (deviceState.activated) {
     processDataDownlink(phyPayload);
   } else {
-    // Возможно Join Accept
     const res = processJoinAccept(phyPayload);
     if (res) {
       await delay(2_000);
@@ -143,7 +140,6 @@ setupMessageHandler(async (phyPayload: Buffer) => {
   }
 });
 
-// Обработка ошибок
 onClientError((err: Error) => {
   console.error("UDP error:", err);
   process.exit(1);

@@ -1,6 +1,5 @@
-import type { DeviceState } from './types.ts';
+import type { DeviceState } from "./types.ts";
 
-// Состояние устройства
 export const deviceState: DeviceState = {
   devAddr: null,
   nwkSKey: null,
@@ -11,5 +10,6 @@ export const deviceState: DeviceState = {
   activated: false,
   rx1Delay: 1, // секунды
   rx2Delay: 2, // секунды
-};
 
+  vars: {},
+};
