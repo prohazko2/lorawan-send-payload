@@ -30,8 +30,7 @@ cp config.example.json config.json
   "gatewayHost": "dev.rightech.io",
   "gatewayPort": 1700,
   "gatewayEUI": "0000000000000000",
-  "deviceEUI": "0000000000000001",
-  "appEUI": "0000000000000001",
+  "devEUI": "0000000000000001",
   "appKey": "00000000000000000000000000000000",
   "uplinkFPort": 1,
   "uplinkInterval": 60000,
@@ -44,8 +43,7 @@ cp config.example.json config.json
 - `gatewayHost` - адрес LoRaWAN gateway
 - `gatewayPort` - порт LoRaWAN gateway (обычно 1700)
 - `gatewayEUI` - EUI шлюза в hex формате
-- `deviceEUI` - EUI устройства в hex форматеpre
-- `appEUI` - Application EUI в hex формате
+- `devEUI` - EUI устройства в hex формате
 - `appKey` - Application Key в hex формате (32 символа)
 - `uplinkFPort` - FPort для uplink сообщений (по умолчанию, если не указан в uplink.ts)
 - `uplinkInterval` - интервал отправки uplink сообщений в миллисекундах

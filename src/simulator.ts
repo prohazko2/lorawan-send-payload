@@ -89,7 +89,7 @@ export async function _start() {
   console.log("LoRaWAN Device Simulator");
   console.log("========================");
   console.log(`Gateway: ${config.gatewayHost}:${config.gatewayPort}`);
-  console.log(`Device EUI: ${config.deviceEUI}`);
+  console.log(`Device EUI: ${config.devEUI}`);
   console.log(`App EUI: ${config.appEUI}`);
   console.log(
     `Frequency Plan: ${frequencyPlan.name} (${frequencyPlan.description})`
@@ -107,7 +107,7 @@ export async function _start() {
   const devNonce = Math.floor(Math.random() * 65536);
   deviceState.devNonce = devNonce;
   const joinRequest = createJoinRequest(
-    config.deviceEUI,
+    config.devEUI,
     config.appEUI,
     devNonce
   );

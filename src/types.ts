@@ -16,7 +16,7 @@ export interface DeviceConfig {
   gatewayHost: string;
   gatewayPort: number;
   gatewayEUI: string;
-  deviceEUI: string;
+  devEUI: string;
   appEUI: string;
   appKey: string;
   uplinkInterval: number;

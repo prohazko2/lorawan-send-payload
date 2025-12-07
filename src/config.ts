@@ -30,8 +30,8 @@ function loadConfigFromFile(): Partial<DeviceConfig> {
       if (fileConfig.gatewayEUI !== undefined) {
         config.gatewayEUI = String(fileConfig.gatewayEUI);
       }
-      if (fileConfig.deviceEUI !== undefined) {
-        config.deviceEUI = String(fileConfig.deviceEUI);
+      if (fileConfig.devEUI !== undefined) {
+        config.devEUI = String(fileConfig.devEUI);
       }
       if (fileConfig.appEUI !== undefined) {
         config.appEUI = String(fileConfig.appEUI);
@@ -84,8 +84,8 @@ export const config: DeviceConfig = {
     : fileConfig.gatewayPort || 1700,
   gatewayEUI:
     process.env.GATEWAY_EUI || fileConfig.gatewayEUI || "0000000000000000",
-  deviceEUI:
-    process.env.DEVICE_EUI || fileConfig.deviceEUI || "0000000000000001",
+  devEUI:
+    process.env.DEV_EUI || fileConfig.devEUI || "0000000000000001",
   appEUI: process.env.APP_EUI || fileConfig.appEUI || "0000000000000001",
   appKey:
     process.env.APP_KEY ||
