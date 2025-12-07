@@ -20,7 +20,7 @@ import type { FrequencyPlan } from "./frequency-plans.ts";
 import type { UplinkMessage } from "./types.ts";
 
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
-import { generateUplink as generateUplinkDefault } from "../uplink-default.ts";
+import { generateUplink as generateUplinkDefault } from "../uplink.example.ts";
 
 let payloadGenerator: (() => UplinkMessage) | null = null;
 let payloadGeneratorLoaded = false;

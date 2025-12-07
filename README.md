@@ -61,7 +61,13 @@ npm start
 
 ## Генерация uplink payload
 
-Для использования собственного генератора payload создайте файл `uplink.ts` в корне проекта:
+Для использования собственного payload скопируйте файл [`uplink.example.ts`](./uplink.example.ts):
+
+```bash
+cp uplink.example.ts uplink.ts
+```
+
+И изменяйте его произвольным образом:
 
 ```ts
 import type { UplinkMessage } from "./src/types.ts";
@@ -76,20 +82,6 @@ export function generateUplink(): UplinkMessage {
   };
 }
 ```
-
-Если файл `uplink.ts` не найден, будет использован [генератор по умолчанию](./uplink-default.ts):
-```ts
-import type { UplinkMessage } from "./src/types.ts";
-import { config } from "./src/config.ts";
-
-export function generateUplink(): UplinkMessage {
-  return {
-    fPort: config.uplinkFPort,
-    payload: Buffer.from(`${new Date().toISOString()}`),
-  };
-}
-```
-
 
 ## Лицензия
 
