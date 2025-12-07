@@ -74,9 +74,9 @@ export function generateUplink(): UplinkMessage {
 }
 ```
 
-Если файл `uplink.ts` не найден, будет использован генератор:
+Если файл `uplink.ts` не найден, будет использован генератор по умолчанию:
 ```ts
-function defaultPayloadGenerator(): UplinkMessage {
+export function generateUplinkDefault(): UplinkMessage {
   return {
     fPort: config.uplinkFPort,
     payload: Buffer.from(`${new Date().toISOString()}`),

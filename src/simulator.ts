@@ -21,7 +21,7 @@ import type { UplinkMessage } from "./types.ts";
 
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 
-function defaultPayloadGenerator(): UplinkMessage {
+export function generateUplinkDefault(): UplinkMessage {
   return {
     fPort: config.uplinkFPort,
     payload: Buffer.from(`${new Date().toISOString()}`),
@@ -33,7 +33,7 @@ let payloadGeneratorLoaded = false;
 
 async function loadPayloadGenerator(): Promise<() => UplinkMessage> {
   if (payloadGeneratorLoaded) {
-    return payloadGenerator || defaultPayloadGenerator;
+    return payloadGenerator || generateUplinkDefault;
   }
 
   payloadGeneratorLoaded = true;
@@ -50,7 +50,7 @@ async function loadPayloadGenerator(): Promise<() => UplinkMessage> {
     console.warn(`Using default payload generator`);
   }
 
-  payloadGenerator = defaultPayloadGenerator;
+  payloadGenerator = generateUplinkDefault;
   return payloadGenerator;
 }
 
