@@ -76,9 +76,12 @@ import { config } from "./src/config.ts";
 import { deviceState } from "./src/device-state.ts";
 
 export function generateUplink(): UplinkMessage {
+  const t = Math.random() * 256 - 128;
+  const h = Math.random() * 100;
+
   return {
     fPort: 2,
-    payload: Buffer.from([42, 42]),
+    payload: Buffer.from([t, h]),
   };
 }
 ```

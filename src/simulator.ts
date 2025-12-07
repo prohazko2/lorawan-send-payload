@@ -21,6 +21,7 @@ import type { UplinkMessage } from "./types.ts";
 
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 import { generateUplink as generateUplinkDefault } from "../uplink.example.ts";
+import { getPrintableBuf } from "./util.ts";
 
 let payloadGenerator: (() => UplinkMessage) | null = null;
 let payloadGeneratorLoaded = false;
@@ -58,10 +59,11 @@ export async function sendUplink(frequencyPlan: FrequencyPlan) {
   const phyPayload = createDataUplink(payload, fPort);
   if (phyPayload) {
     const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
+
     console.log(
       `Sending uplink (FCnt: ${
         deviceState.fCntUp - 1
-      }, FPort: ${fPort}, Freq: ${uplinkFreq} MHz): ${payload.toString()}`
+      }, FPort: ${fPort}, Freq: ${uplinkFreq} MHz): ${getPrintableBuf(payload)}`
     );
     sendPushData(
       phyPayload,
