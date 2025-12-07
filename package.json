@@ -1,5 +1,5 @@
 {
-  "name": "lorawan-device-simulator",
+  "name": "lorawan-send-payload",
   "version": "1.0.0",
   "description": "Simple LoRaWAN device simulator with OTAA and Class A support",
   "main": "src/simulator.ts",
