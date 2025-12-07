@@ -7,7 +7,7 @@
 
 - Node.js >= 22.0.0
 
-**⚠️** Для работы с TypeScript без компиляции используется флаг `--experimental-strip-types`.   
+**⚠️** Для выполнения TypeScript без компиляции используется флаг `--experimental-strip-types`.   
 Этот флаг является экспериментальным и может измениться в будущих версиях Node.js
 
 ## Установка
@@ -61,7 +61,7 @@ npm start
 
 ## Генерация uplink payload
 
-Для создания собственного генератора uplink payload создайте файл `uplink.ts` в корне проекта:
+Для использования собственного генератора payload создайте файл `uplink.ts` в корне проекта:
 
 ```ts
 import type { UplinkMessage } from "./src/types.ts";
