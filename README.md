@@ -32,9 +32,9 @@ cp config.example.json config.json
   "gatewayEUI": "0000000000000000",
   "devEUI": "0000000000000001",
   "appKey": "00000000000000000000000000000000",
+  "frequencyPlan": "RU864",
   "uplinkFPort": 1,
-  "uplinkInterval": 60000,
-  "frequencyPlan": "RU864"
+  "uplinkInterval": 60000
 }
 ```
 
