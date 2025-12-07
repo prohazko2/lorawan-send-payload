@@ -9,7 +9,7 @@ export interface DebugConfig {
 // Интерфейсы для конфигурации и состояния
 export interface DeviceConfig {
   debug: DebugConfig;
-  gatewayAddress: string;
+  gatewayHost: string;
   gatewayPort: number;
   gatewayEUI: string;
   deviceEUI: string;

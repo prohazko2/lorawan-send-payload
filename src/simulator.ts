@@ -58,7 +58,7 @@ export async function _start() {
 
   console.log("LoRaWAN Device Simulator");
   console.log("========================");
-  console.log(`Gateway: ${config.gatewayAddress}:${config.gatewayPort}`);
+  console.log(`Gateway: ${config.gatewayHost}:${config.gatewayPort}`);
   console.log(`Device EUI: ${config.deviceEUI}`);
   console.log(`App EUI: ${config.appEUI}`);
   console.log(

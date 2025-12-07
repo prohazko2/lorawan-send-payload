@@ -26,7 +26,7 @@ export function sendPullData(): void {
   client.send(
     data,
     config.gatewayPort,
-    config.gatewayAddress,
+    config.gatewayHost,
     (err: Error | null) => {
       if (err) console.error("Send error:", err);
     }
@@ -79,7 +79,7 @@ export function sendPushData(
   client.send(
     data,
     config.gatewayPort,
-    config.gatewayAddress,
+    config.gatewayHost,
     (err: Error | null, b: number) => {}
   );
 }
@@ -114,7 +114,7 @@ export function sendTxAck(token: number): void {
   client.send(
     data,
     config.gatewayPort,
-    config.gatewayAddress,
+    config.gatewayHost,
     (err: Error | null) => {
       if (err) {
         console.error("Send TX_ACK error:", err);

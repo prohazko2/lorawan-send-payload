@@ -18,8 +18,8 @@ function loadConfigFromFile(): Partial<DeviceConfig> {
         config.debug = fileConfig.debug;
       }
 
-      if (fileConfig.gatewayAddress !== undefined) {
-        config.gatewayAddress = String(fileConfig.gatewayAddress);
+      if (fileConfig.gatewayHost !== undefined) {
+        config.gatewayHost = String(fileConfig.gatewayHost);
       }
       if (fileConfig.gatewayPort !== undefined) {
         config.gatewayPort =
@@ -75,10 +75,10 @@ export const config: DeviceConfig = {
     udp: fileConfig.debug?.udp || false,
     lora: fileConfig.debug?.lora || false,
   },
-  gatewayAddress:
-    process.env.GATEWAY_ADDRESS ||
-    fileConfig.gatewayAddress ||
-    "sandbox.rightech.io",
+  gatewayHost:
+    process.env.GATEWAY_HOST ||
+    fileConfig.gatewayHost ||
+    "dev.rightech.io",
   gatewayPort: process.env.GATEWAY_PORT
     ? parseInt(process.env.GATEWAY_PORT, 10)
     : fileConfig.gatewayPort || 1700,

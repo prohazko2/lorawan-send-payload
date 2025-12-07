@@ -3,7 +3,7 @@
     "udp": true,
     "lora": false
   },
-  "gatewayAddress": "dev.rightech.io",
+  "gatewayHost": "dev.rightech.io",
   "gatewayPort": 1700,
   "gatewayEUI": "0000000000000000",
   "deviceEUI": "0000000000000001",
