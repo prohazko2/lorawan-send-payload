@@ -102,7 +102,10 @@ export function processJoinAccept(data: Buffer): boolean {
 }
 
 // Создание Data uplink сообщения
-export function createDataUplink(payload: string | Buffer): Buffer | null {
+export function createDataUplink(
+  payload: string | Buffer,
+  fPort?: number
+): Buffer | null {
   if (
     !deviceState.activated ||
     !deviceState.devAddr ||
@@ -127,7 +130,7 @@ export function createDataUplink(payload: string | Buffer): Buffer | null {
         FPending: false, // default = false
       },
       FCnt: deviceState.fCntUp,
-      FPort: config.uplinkFPort,
+      FPort: fPort || config.uplinkFPort,
       payload: payloadBuffer,
     },
     deviceState.appSKey, // AppSKey

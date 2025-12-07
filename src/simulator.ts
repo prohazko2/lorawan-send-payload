@@ -19,12 +19,46 @@ import {
 import type { FrequencyPlan } from "./frequency-plans.ts";
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 
-export function sendUplink(frequencyPlan: FrequencyPlan) {
+function defaultPayloadGenerator(): Buffer {
+  return Buffer.from(`hello: ${new Date().toISOString()}`);
+}
+
+let payloadGenerator: (() => Buffer) | null = null;
+let payloadGeneratorLoaded = false;
+
+async function loadPayloadGenerator(): Promise<() => Buffer> {
+  if (payloadGeneratorLoaded) {
+    return payloadGenerator || defaultPayloadGenerator;
+  }
+
+  payloadGeneratorLoaded = true;
+
+  try {
+    const payloadModule = await import("../uplink.ts");
+    if (
+      payloadModule &&
+      typeof payloadModule.generateUplinkPayload === "function"
+    ) {
+      payloadGenerator = payloadModule.generateUplinkPayload;
+      console.log("✓ Custom uplink payload generator loaded");
+      return payloadGenerator;
+    }
+  } catch (error) {
+    console.warn(error instanceof Error ? error.message : String(error));
+    console.warn(`Using default payload generator`);
+  }
+
+  payloadGenerator = defaultPayloadGenerator;
+  return payloadGenerator;
+}
+
+export async function sendUplink(frequencyPlan: FrequencyPlan) {
   if (!deviceState.activated) {
     console.log(`sendUplink: device not activated yet`);
     return;
   }
-  const payload = Buffer.from(`hello: ${new Date().toISOString()}`);
+  const generator = await loadPayloadGenerator();
+  const payload = generator();
   const phyPayload = createDataUplink(payload);
   if (phyPayload) {
     const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
@@ -88,8 +122,8 @@ export async function _start() {
     sendPullData();
   }, 10_000);
 
-  setInterval(() => {
-    sendUplink(frequencyPlan);
+  setInterval(async () => {
+    await sendUplink(frequencyPlan);
   }, config.uplinkInterval);
 }
 
@@ -104,7 +138,7 @@ setupMessageHandler(async (phyPayload: Buffer) => {
     if (res) {
       await delay(2_000);
       const frequencyPlan = getFrequencyPlan(config.frequencyPlan);
-      sendUplink(frequencyPlan!);
+      await sendUplink(frequencyPlan!);
     }
   }
 });
