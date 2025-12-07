@@ -66,6 +66,9 @@ npm start
 ```ts
 import type { UplinkMessage } from "./src/types.ts";
 
+import { config } from "./src/config.ts";
+import { deviceState } from "./src/device-state.ts";
+
 export function generateUplink(): UplinkMessage {
   return {
     fPort: 2,
@@ -74,12 +77,12 @@ export function generateUplink(): UplinkMessage {
 }
 ```
 
-Если файл `uplink.ts` не найден, будет использован генератор по умолчанию:
+Если файл `uplink.ts` не найден, будет использован [генератор по умолчанию](./uplink-default.ts):
 ```ts
-import { config } from "./src/config.ts";
 import type { UplinkMessage } from "./src/types.ts";
+import { config } from "./src/config.ts";
 
-export function generateUplinkDefault(): UplinkMessage {
+export function generateUplink(): UplinkMessage {
   return {
     fPort: config.uplinkFPort,
     payload: Buffer.from(`${new Date().toISOString()}`),
