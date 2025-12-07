@@ -1,4 +1,3 @@
-import { hexToBytes, bytesToHex } from "./utils.ts";
 import { deviceState } from "./device-state.ts";
 import { config } from "./config.ts";
 
@@ -16,9 +15,9 @@ export function createJoinRequest(
   appEUI: string,
   devNonce: number
 ): Buffer {
-  const joinEUI = hexToBytes(appEUI);
-  const deviceEUI = hexToBytes(devEUI);
-  const appKey = hexToBytes(config.appKey);
+  const joinEUI = Buffer.from(appEUI, "hex");
+  const deviceEUI = Buffer.from(devEUI, "hex");
+  const appKey = Buffer.from(config.appKey, "hex");
 
   const packet = lora.fromFields(
     {
@@ -51,7 +50,7 @@ export function processJoinAccept(data: Buffer): boolean {
     return false;
   }
 
-  const appKey = hexToBytes(config.appKey);
+  const appKey = Buffer.from(config.appKey, "hex");
 
   let packet: ReturnType<typeof lora.fromWire>;
   try {
@@ -87,9 +86,9 @@ export function processJoinAccept(data: Buffer): boolean {
   deviceState.fCntDown = 0;
 
   console.log("✓ Device activated via OTAA");
-  console.log(`  DevAddr: ${bytesToHex(deviceState.devAddr)}`);
-  console.log(`  NwkSKey: ${bytesToHex(deviceState.nwkSKey)}`);
-  console.log(`  AppSKey: ${bytesToHex(deviceState.appSKey)}`);
+  console.log(`  DevAddr: ${deviceState.devAddr.toString("hex")}`);
+  console.log(`  NwkSKey: ${deviceState.nwkSKey.toString("hex")}`);
+  console.log(`  AppSKey: ${deviceState.appSKey.toString("hex")}`);
 
   return true;
 }
