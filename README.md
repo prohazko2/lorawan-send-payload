@@ -59,9 +59,9 @@ cp config.example.json config.json
 npm start
 ```
 
-## Кастомизация payload
+## Генерация uplink payload
 
-Для кастомизации payload создайте файл `uplink.ts` в корне проекта:
+Для создания собственного генератора uplink payload создайте файл `uplink.ts` в корне проекта:
 
 ```ts
 import type { UplinkMessage } from "./src/types.ts";
