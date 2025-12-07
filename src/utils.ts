@@ -7,12 +7,6 @@ export function hexToBytes(hex: string): Buffer {
   return Buffer.from(bytes);
 }
 
-export function hexToEui64(hex: string): Buffer {
-  const bytes = hexToBytes(hex);
-  return Buffer.from(bytes).reverse();
-}
-
 export function bytesToHex(buffer: Buffer): string {
   return buffer.toString('hex');
 }
-

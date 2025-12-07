@@ -1,19 +1,12 @@
-import { aes128Encrypt } from "./crypto.ts";
-import { hexToBytes, hexToEui64, bytesToHex } from "./utils.ts";
+import { hexToBytes, bytesToHex } from "./utils.ts";
 import { deviceState } from "./device-state.ts";
 import { config } from "./config.ts";
 
 import lora from "lora-packet";
 
-export function getDevNonceBufferLe(n: number) {
+export function getDevNonceBuffer(n: number) {
   const b = Buffer.alloc(2);
   b.writeUint16LE(n);
-  return b;
-}
-
-export function getDevNonceBufferBe(n: number) {
-  const b = Buffer.alloc(2);
-  b.writeUint16BE(n);
   return b;
 }
 
@@ -32,7 +25,7 @@ export function createJoinRequest(
       MType: "Join Request",
       AppEUI: joinEUI,
       DevEUI: deviceEUI,
-      DevNonce: getDevNonceBufferLe(devNonce),
+      DevNonce: getDevNonceBuffer(devNonce),
     },
     appKey
   );
@@ -82,7 +75,7 @@ export function processJoinAccept(data: Buffer): boolean {
     appKey,
     packet.NetID!,
     packet.AppNonce!,
-    getDevNonceBufferLe(deviceState.devNonce)
+    getDevNonceBuffer(deviceState.devNonce)
   );
 
   deviceState.devAddr = packet.DevAddr!;
