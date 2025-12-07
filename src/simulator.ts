@@ -18,7 +18,7 @@ import {
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 
 // Инициализация
-async function start(): void {
+export async function start() {
   // Получаем частотный план
   const frequencyPlan = getFrequencyPlan(config.frequencyPlan);
   if (!frequencyPlan) {
