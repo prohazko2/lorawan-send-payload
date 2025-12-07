@@ -7,6 +7,9 @@
 
 - Node.js >= 22.0.0
 
+**⚠️** Для работы с TypeScript без компиляции используется флаг `--experimental-strip-types`.   
+Этот флаг является экспериментальным и может измениться в будущих версиях Node.js
+
 ## Установка
 
 ```bash
@@ -16,6 +19,7 @@ npm install
 ## Настройка
 
 1. Скопируйте файл конфигурации:
+
 ```bash
 cp config.example.json config.json
 ```
@@ -59,7 +63,7 @@ npm start
 
 Для кастомизации payload создайте файл `uplink.ts` в корне проекта:
 
-```typescript
+```ts
 import type { UplinkMessage } from "./src/types.ts";
 
 export function generateUplink(): UplinkMessage {
@@ -70,7 +74,7 @@ export function generateUplink(): UplinkMessage {
 }
 ```
 
-Если файл `uplink.ts` не найден, будет использован дефолтный генератор:
+Если файл `uplink.ts` не найден, будет использован генератор:
 ```ts
 function defaultPayloadGenerator(): UplinkMessage {
   return {
