@@ -1,5 +1,5 @@
 import { aes128Encrypt, aes128Decrypt, aesCmac } from './crypto.ts';
-import { hexToBytes, bytesToHex } from './utils.ts';
+import { hexToBytes, hexToEui64, bytesToHex } from './utils.ts';
 import { deviceState } from './device-state.ts';
 import { config } from './config.ts';
 
@@ -113,13 +113,12 @@ function calculateJoinRequestMIC(
 // Создание Join Request
 export function createJoinRequest(devEUI: string, appEUI: string, devNonce: number): Buffer {
   const mhdr = 0x00; // Join Request
-  const joinEUI = hexToBytes(appEUI);
-  const deviceEUI = hexToBytes(devEUI);
+  const joinEUI = hexToEui64(appEUI);
+  const deviceEUI = hexToEui64(devEUI);
   const appKey = hexToBytes(config.appKey);
   console.log('createJoinRequest joinEUI', joinEUI);
   console.log('createJoinRequest deviceEUI', deviceEUI);
   console.log('createJoinRequest appKey', appKey.length, appKey);
-
 
   
   // MIC для Join Request использует appKey и другой формат

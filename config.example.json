@@ -6,6 +6,6 @@
   "appEUI": "0000000000000001",
   "appKey": "00000000000000000000000000000000",
   "uplinkInterval": 60000,
-  "frequencyPlan": "EU868"
+  "frequencyPlan": "RU864"
 }
 
