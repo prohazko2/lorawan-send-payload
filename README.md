@@ -18,7 +18,7 @@ npm install
 
 ## Настройка
 
-1. Скопируйте файл конфигурации:
+1. Скопируйте файл конфигурации [config.example.json](./config.example.json):
 
 ```bash
 cp config.example.json config.json
@@ -67,7 +67,7 @@ npm start
 cp uplink.example.ts uplink.ts
 ```
 
-И изменяйте его произвольным образом:
+Далее редактируйте `uplink.ts` произвольным образом:
 
 ```ts
 import type { UplinkMessage } from "./src/types.ts";
