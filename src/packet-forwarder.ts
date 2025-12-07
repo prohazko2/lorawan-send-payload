@@ -9,34 +9,18 @@ const client = dgram.createSocket("udp4");
 // Packet Forwarder протокол
 export function sendPullData(): void {
   const token = Math.floor(Math.random() * 65536);
-  const message: PacketForwarderMessage = {
-    stat: {
-      time: new Date().toISOString(),
-      lati: 0,
-      long: 0,
-      alti: 0,
-      rxnb: 0,
-      rxok: 0,
-      rxfw: 0,
-      ackr: 100,
-      dwnb: 0,
-      txnb: 0,
-    },
-  };
-
-  const packet = Buffer.from(JSON.stringify(message));
   const header = Buffer.alloc(4);
-  console.log("sendPullData", token, message);
-
+  
   header.writeUInt8(0x02, 0); // Protocol version = 2
-  header.writeUInt16BE(token, 1); // Token in bytes 1-2
+  header.writeUInt16LE(token, 1); // Token in bytes 1-2 (little-endian)
   header.writeUInt8(0x02, 3); // PULL_DATA identifier
 
   const data = Buffer.concat([
     header,
     Buffer.from(config.gatewayEUI, "hex"),
-    packet,
   ]);
+  
+  console.log("sendPullData token:", token);
   client.send(
     data,
     config.gatewayPort,
@@ -76,7 +60,7 @@ export function sendPushData(
   console.log("sendPushData", token, message);
   const header = Buffer.alloc(4);
   header.writeUInt8(0x02, 0); // Protocol version = 2
-  header.writeUInt16BE(token, 1); // Token in bytes 1-2
+  header.writeUInt16LE(token, 1); // Token in bytes 1-2 (little-endian)
   header.writeUInt8(0x00, 3); // PUSH_DATA identifier
   //console.log("z", Buffer.from(config.gatewayEUI, "hex"));
 
@@ -100,12 +84,12 @@ export function setupMessageHandler(
 ): void {
   // Обработка входящих сообщений от gateway
   client.on("message", (msg: Buffer, rinfo: dgram.RemoteInfo) => {
-    console.log('message', msg);
+    console.log('message', msg.length, msg);
 
     if (msg.length < 4) return;
 
     const protocolVersion = msg[0]; // Protocol version (should be 0x02)
-    const token = msg.readUInt16BE(1); // Token in bytes 1-2
+    const token = msg.readUInt16LE(1); // Token in bytes 1-2 (little-endian)
     const identifier = msg[3]; // Identifier in byte 3
 
     console.log('message', {protocolVersion, token, identifier});
