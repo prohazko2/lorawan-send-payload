@@ -2,19 +2,6 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { DeviceConfig, DebugConfig } from "./types.ts";
 
-// Интерфейс для конфигурации из файла
-interface ConfigFile {
-  debug: DebugConfig;
-  gatewayAddress?: string;
-  gatewayPort?: number | string;
-  gatewayEUI?: string;
-  deviceEUI?: string;
-  appEUI?: string;
-  appKey?: string;
-  uplinkInterval?: number | string;
-  frequencyPlan?: string;
-}
-
 // Чтение конфигурации из файла
 function loadConfigFromFile(): Partial<DeviceConfig> {
   const configPath = path.join(process.cwd(), "config.json");
@@ -22,7 +9,7 @@ function loadConfigFromFile(): Partial<DeviceConfig> {
   try {
     if (fs.existsSync(configPath)) {
       const fileContent = fs.readFileSync(configPath, "utf-8");
-      const fileConfig: ConfigFile = JSON.parse(fileContent);
+      const fileConfig: DeviceConfig = JSON.parse(fileContent);
 
       // Преобразуем значения в правильные типы
       const config: Partial<DeviceConfig> = {};
@@ -57,6 +44,9 @@ function loadConfigFromFile(): Partial<DeviceConfig> {
           typeof fileConfig.uplinkInterval === "string"
             ? parseInt(fileConfig.uplinkInterval, 10)
             : fileConfig.uplinkInterval;
+      }
+      if (fileConfig.uplinkFPort !== undefined) {
+        config.uplinkFPort = +fileConfig.uplinkFPort;
       }
       if (fileConfig.frequencyPlan !== undefined) {
         config.frequencyPlan = String(fileConfig.frequencyPlan);
@@ -104,6 +94,7 @@ export const config: DeviceConfig = {
   uplinkInterval: process.env.UPLINK_INTERVAL
     ? parseInt(process.env.UPLINK_INTERVAL, 10)
     : fileConfig.uplinkInterval || 60000, // мс
+  uplinkFPort: fileConfig.uplinkFPort || 1,
   frequencyPlan:
     process.env.FREQUENCY_PLAN || fileConfig.frequencyPlan || "EU868",
 };

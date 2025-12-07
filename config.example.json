@@ -1,11 +1,15 @@
 {
+  "debug": {
+    "udp": true,
+    "lora": false
+  },
   "gatewayAddress": "dev.rightech.io",
   "gatewayPort": 1700,
   "gatewayEUI": "0000000000000000",
   "deviceEUI": "0000000000000001",
   "appEUI": "0000000000000001",
   "appKey": "00000000000000000000000000000000",
+  "uplinkFPort": 1,
   "uplinkInterval": 60000,
   "frequencyPlan": "RU864"
 }
-

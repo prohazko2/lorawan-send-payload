@@ -94,13 +94,18 @@ export async function _start() {
 }
 
 // Настройка обработчика сообщений
-setupMessageHandler((phyPayload: Buffer) => {
+setupMessageHandler(async (phyPayload: Buffer) => {
   // Обработка downlink
   if (deviceState.activated) {
     processDataDownlink(phyPayload);
   } else {
     // Возможно Join Accept
-    processJoinAccept(phyPayload);
+    const res = processJoinAccept(phyPayload);
+    if (res) {
+      await delay(2_000);
+      const frequencyPlan = getFrequencyPlan(config.frequencyPlan);
+      sendUplink(frequencyPlan!);
+    }
   }
 });
 

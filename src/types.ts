@@ -16,6 +16,7 @@ export interface DeviceConfig {
   appEUI: string;
   appKey: string;
   uplinkInterval: number;
+  uplinkFPort: number;
   frequencyPlan: string; // Название частотного плана (EU868, RU864, и т.д.)
 }
 

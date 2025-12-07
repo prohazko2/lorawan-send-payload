@@ -123,7 +123,7 @@ export function createDataUplink(payload: string | Buffer): Buffer | null {
         FPending: false, // default = false
       },
       FCnt: deviceState.fCntUp,
-      FPort: 2,
+      FPort: config.uplinkFPort,
       payload: payloadBuffer,
     },
     deviceState.appSKey, // AppSKey
