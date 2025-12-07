@@ -15,10 +15,36 @@ import {
   bindClient,
   onClientError,
 } from "./packet-forwarder.ts";
+
+import type { FrequencyPlan } from "./frequency-plans.ts";
 import { getFrequencyPlan, getRandomUplinkChannel } from "./frequency-plans.ts";
 
+export function sendUplink(frequencyPlan: FrequencyPlan) {
+  if (!deviceState.activated) {
+    console.log(`sendUplink: device not activated yet`);
+    return;
+  }
+  const payload = Buffer.from(`hello: ${new Date().toISOString()}`);
+  const phyPayload = createDataUplink(payload);
+  if (phyPayload) {
+    const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
+    console.log(
+      `Sending uplink (FCnt: ${
+        deviceState.fCntUp - 1
+      }, Freq: ${uplinkFreq} MHz): ${payload.toString()}`
+    );
+    sendPushData(
+      phyPayload,
+      -100,
+      5.0,
+      uplinkFreq,
+      frequencyPlan.defaultDatarate
+    );
+  }
+}
+
 // Инициализация
-export async function start() {
+export async function _start() {
   // Получаем частотный план
   const frequencyPlan = getFrequencyPlan(config.frequencyPlan);
   if (!frequencyPlan) {
@@ -58,32 +84,12 @@ export async function start() {
   const joinFreq = getRandomUplinkChannel(frequencyPlan);
   sendPushData(joinRequest, -100, 5.0, joinFreq, frequencyPlan.defaultDatarate);
 
-  // Периодическая отправка PULL_DATA
   setInterval(() => {
     sendPullData();
   }, 10_000);
 
-  // Периодическая отправка uplink данных
   setInterval(() => {
-    if (deviceState.activated) {
-      const payload = Buffer.from("Hello LoRaWAN!");
-      const phyPayload = createDataUplink(payload);
-      if (phyPayload) {
-        const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
-        console.log(
-          `Sending uplink (FCnt: ${
-            deviceState.fCntUp - 1
-          }, Freq: ${uplinkFreq} MHz): ${payload.toString()}`
-        );
-        sendPushData(
-          phyPayload,
-          -100,
-          5.0,
-          uplinkFreq,
-          frequencyPlan.defaultDatarate
-        );
-      }
-    }
+    sendUplink(frequencyPlan);
   }, config.uplinkInterval);
 }
 
@@ -98,14 +104,18 @@ setupMessageHandler((phyPayload: Buffer) => {
   }
 });
 
-// Запуск
-bindClient(() => {
-  console.log("UDP client bound");
-  start();
-});
-
 // Обработка ошибок
 onClientError((err: Error) => {
   console.error("UDP error:", err);
   process.exit(1);
 });
+
+export function start() {
+  return new Promise((resolve) => {
+    bindClient(() => {
+      console.log("UDP client bound");
+      _start();
+      resolve(null);
+    });
+  });
+}

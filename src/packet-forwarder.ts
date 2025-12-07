@@ -10,19 +10,19 @@ const client = dgram.createSocket("udp4");
 export function sendPullData(): void {
   const token = Math.floor(Math.random() * 65536);
   const header = Buffer.alloc(4);
-  
+
   header.writeUInt8(0x02, 0); // Protocol version = 2
   header.writeUInt16LE(token, 1); // Token in bytes 1-2 (little-endian)
   header.writeUInt8(0x02, 3); // PULL_DATA identifier
 
-  const data = Buffer.concat([
-    header,
-    Buffer.from(config.gatewayEUI, "hex"),
-  ]);
-  
-  // Логирование сырого исходящего UDP пакета (PULL_DATA)
-  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
-  console.log("sendPullData token:", token);
+  const data = Buffer.concat([header, Buffer.from(config.gatewayEUI, "hex")]);
+
+  if (config.debug.udp) {
+    console.log(
+      `UDP TX [${data.length} bytes] PULL_DATA: ${data.toString("hex")}`
+    );
+  }
+
   client.send(
     data,
     config.gatewayPort,
@@ -59,7 +59,6 @@ export function sendPushData(
 
   const message: PacketForwarderMessage = { rxpk: [rxpk] };
   const packet = Buffer.from(JSON.stringify(message));
-  console.log("sendPushData", token, message);
   const header = Buffer.alloc(4);
   header.writeUInt8(0x02, 0); // Protocol version = 2
   header.writeUInt16LE(token, 1); // Token in bytes 1-2 (little-endian)
@@ -71,16 +70,17 @@ export function sendPushData(
     Buffer.from(config.gatewayEUI, "hex"),
     packet,
   ]);
-  
-  // Логирование сырого исходящего UDP пакета (PUSH_DATA)
-  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
+
+  if (config.debug.udp) {
+    console.log(
+      `UDP TX [${data.length} bytes] PUSH_DATA: ${data.toString("hex")}`
+    );
+  }
   client.send(
     data,
     config.gatewayPort,
     config.gatewayAddress,
-    (err: Error | null, b: number) => {
-      console.error("Send join:", err, b);
-    }
+    (err: Error | null, b: number) => {}
   );
 }
 
@@ -94,8 +94,8 @@ export function sendTxAck(token: number): void {
   // TX_ACK payload: {"txpk_ack": {"error": "NONE"}}
   const payload = JSON.stringify({
     txpk_ack: {
-      error: "NONE"
-    }
+      error: "NONE",
+    },
   });
   const packet = Buffer.from(payload);
 
@@ -105,9 +105,12 @@ export function sendTxAck(token: number): void {
     packet,
   ]);
 
-  // Логирование сырого исходящего UDP пакета (TX_ACK)
-  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
-  console.log("sendTxAck token:", token);
+  if (config.debug.udp) {
+    console.log(
+      `UDP TX [${data.length} bytes] TX_ACK: ${data.toString("hex")}`
+    );
+  }
+
   client.send(
     data,
     config.gatewayPort,
@@ -127,18 +130,15 @@ export function setupMessageHandler(
 ): void {
   // Обработка входящих сообщений от gateway
   client.on("message", (msg: Buffer, rinfo: dgram.RemoteInfo) => {
-    // Логирование сырого входящего UDP пакета
-    console.log(`UDP RX [${msg.length} bytes]: ${msg.toString('hex')}`);
-    console.log('message', msg.length, msg);
+    if (config.debug.udp) {
+      console.log(`UDP RX [${msg.length} bytes]: ${msg.toString("hex")}`);
+    }
 
     if (msg.length < 4) return;
 
     const protocolVersion = msg[0]; // Protocol version (should be 0x02)
     const token = msg.readUInt16LE(1); // Token in bytes 1-2 (little-endian)
     const identifier = msg[3]; // Identifier in byte 3
-
-    console.log('message', {protocolVersion, token, identifier});
-
 
     if (identifier === 0x04) {
       // PULL_ACK
@@ -163,10 +163,10 @@ export function setupMessageHandler(
         if (json.txpk) {
           const txpk = json.txpk;
           const phyPayload = Buffer.from(txpk.data, "base64");
-          
+
           // Отправляем TX_ACK Network Server'у с тем же token
           sendTxAck(token);
-          
+
           // Обрабатываем downlink (JoinAccept или Data Downlink)
           onPullResp(phyPayload);
         }

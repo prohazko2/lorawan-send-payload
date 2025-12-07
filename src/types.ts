@@ -1,8 +1,14 @@
 // LoRaWAN версия 1.0.3
 export const LORAWAN_VERSION: number = 0x00; // LoRaWAN 1.0.x
 
+export interface DebugConfig {
+  udp: boolean;
+  lora: boolean;
+}
+
 // Интерфейсы для конфигурации и состояния
 export interface DeviceConfig {
+  debug: DebugConfig;
   gatewayAddress: string;
   gatewayPort: number;
   gatewayEUI: string;

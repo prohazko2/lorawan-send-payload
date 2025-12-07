@@ -27,10 +27,6 @@ export function createJoinRequest(
   const deviceEUI = hexToBytes(devEUI);
   const appKey = hexToBytes(config.appKey);
 
-  console.log("createJoinRequest joinEUI", joinEUI);
-  console.log("createJoinRequest deviceEUI", deviceEUI);
-  console.log("createJoinRequest appKey", appKey.length, appKey);
-
   const packet = lora.fromFields(
     {
       MType: "Join Request",
@@ -41,13 +37,13 @@ export function createJoinRequest(
     appKey
   );
 
-  console.log("createJoinRequest packet", packet.toString());
   packet.MIC = lora.calculateMIC(packet, null!, appKey);
   (packet as any)._mergeGroupFields();
+  if (config.debug.lora) {
+    console.log("createJoinRequest packet: ", packet.toString());
+  }
 
   const phy = packet.getPHYPayload();
-  console.log("createJoinRequest phy", phy);
-
   if (!phy) {
     throw new Error(`lorawan: createJoinRequest - phy payload failed`);
   }
@@ -116,7 +112,7 @@ export function createDataUplink(payload: string | Buffer): Buffer | null {
   const payloadBuffer =
     typeof payload === "string" ? Buffer.from(payload) : payload;
 
-  const p = lora.fromFields(
+  const packet = lora.fromFields(
     {
       MType: "Unconfirmed Data Up", // (default)
       DevAddr: deviceState.devAddr,
@@ -126,21 +122,24 @@ export function createDataUplink(payload: string | Buffer): Buffer | null {
         ADRACKReq: false, // default = false
         FPending: false, // default = false
       },
-      FCnt: 1,
+      FCnt: deviceState.fCntUp,
+      FPort: 2,
       payload: payloadBuffer,
     },
     deviceState.appSKey, // AppSKey
     deviceState.nwkSKey // NwkSKey
   );
-  console.log("constructedPacket.toString()=\n" + p);
-  const phy = p.getPHYPayload();
+  if (config.debug.lora) {
+    console.log("createDataUplink packet: ", packet.toString());
+  }
+  const phy = packet.getPHYPayload();
   if (!phy) {
     throw new Error(`lorawan: createDataUplink - phy payload failed`);
   }
 
   deviceState.fCntUp++;
 
-  return phy; //phyPayload;
+  return phy;
 }
 
 export function processDataDownlink(data: Buffer): boolean {
@@ -153,5 +152,13 @@ export function processDataDownlink(data: Buffer): boolean {
     return false;
   }
 
-  throw new Error("processDataDownlink: not implemented");
+  //console.log("processDataDownlink", data.length, data);
+
+  const p = lora.fromWire(data);
+  //console.log("processDataDownlink packet", p.toString());
+  //console.log("processDataDownlink buffs ", p.getBuffers());
+
+  //deviceState.fCntDown = p.FCnt + 1;
+
+  return true;
 }
