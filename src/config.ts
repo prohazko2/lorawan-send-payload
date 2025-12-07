@@ -96,5 +96,5 @@ export const config: DeviceConfig = {
     : fileConfig.uplinkInterval || 60000, // мс
   uplinkFPort: fileConfig.uplinkFPort || 1,
   frequencyPlan:
-    process.env.FREQUENCY_PLAN || fileConfig.frequencyPlan || "EU868",
+    process.env.FREQUENCY_PLAN || fileConfig.frequencyPlan || "RU864",
 };
