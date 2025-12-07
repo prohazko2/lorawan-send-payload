@@ -42,9 +42,9 @@ cp config.example.json config.json
 
 - `gatewayHost` - адрес LoRaWAN gateway
 - `gatewayPort` - порт LoRaWAN gateway (обычно 1700)
-- `gatewayEUI` - EUI шлюза в hex формате
-- `devEUI` - EUI устройства в hex формате
-- `appKey` - Application Key в hex формате (32 символа)
+- `gatewayEUI` - EUI шлюза в hex формате (16 символов, 8 байтов)
+- `devEUI` - EUI устройства в hex формате (16 символов, 8 байтов)
+- `appKey` - Application Key в hex формате (32 символа, 16 байтов)
 - `uplinkFPort` - FPort для uplink сообщений (по умолчанию, если не указан в uplink.ts)
 - `uplinkInterval` - интервал отправки uplink сообщений в миллисекундах
 - `frequencyPlan` - частотный план (RU864, EU868), остальные не проверялись
