@@ -20,6 +20,8 @@ export function sendPullData(): void {
     Buffer.from(config.gatewayEUI, "hex"),
   ]);
   
+  // Логирование сырого исходящего UDP пакета (PULL_DATA)
+  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
   console.log("sendPullData token:", token);
   client.send(
     data,
@@ -69,6 +71,9 @@ export function sendPushData(
     Buffer.from(config.gatewayEUI, "hex"),
     packet,
   ]);
+  
+  // Логирование сырого исходящего UDP пакета (PUSH_DATA)
+  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
   client.send(
     data,
     config.gatewayPort,
@@ -79,11 +84,51 @@ export function sendPushData(
   );
 }
 
+// Отправка TX_ACK после получения PULL_RESP с downlink
+export function sendTxAck(token: number): void {
+  const header = Buffer.alloc(4);
+  header.writeUInt8(0x02, 0); // Protocol version = 2
+  header.writeUInt16LE(token, 1); // Token в bytes 1-2 (little-endian, тот же что в PULL_RESP)
+  header.writeUInt8(0x05, 3); // TX_ACK identifier
+
+  // TX_ACK payload: {"txpk_ack": {"error": "NONE"}}
+  const payload = JSON.stringify({
+    txpk_ack: {
+      error: "NONE"
+    }
+  });
+  const packet = Buffer.from(payload);
+
+  const data = Buffer.concat([
+    header,
+    Buffer.from(config.gatewayEUI, "hex"),
+    packet,
+  ]);
+
+  // Логирование сырого исходящего UDP пакета (TX_ACK)
+  console.log(`UDP TX [${data.length} bytes]: ${data.toString('hex')}`);
+  console.log("sendTxAck token:", token);
+  client.send(
+    data,
+    config.gatewayPort,
+    config.gatewayAddress,
+    (err: Error | null) => {
+      if (err) {
+        console.error("Send TX_ACK error:", err);
+      } else {
+        console.log("TX_ACK sent successfully");
+      }
+    }
+  );
+}
+
 export function setupMessageHandler(
   onPullResp: (phyPayload: Buffer) => void
 ): void {
   // Обработка входящих сообщений от gateway
   client.on("message", (msg: Buffer, rinfo: dgram.RemoteInfo) => {
+    // Логирование сырого входящего UDP пакета
+    console.log(`UDP RX [${msg.length} bytes]: ${msg.toString('hex')}`);
     console.log('message', msg.length, msg);
 
     if (msg.length < 4) return;
@@ -118,6 +163,11 @@ export function setupMessageHandler(
         if (json.txpk) {
           const txpk = json.txpk;
           const phyPayload = Buffer.from(txpk.data, "base64");
+          
+          // Отправляем TX_ACK Network Server'у с тем же token
+          sendTxAck(token);
+          
+          // Обрабатываем downlink (JoinAccept или Data Downlink)
           onPullResp(phyPayload);
         }
       } catch (e) {
