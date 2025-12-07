@@ -59,11 +59,11 @@ export async function sendUplink(frequencyPlan: FrequencyPlan) {
   const phyPayload = createDataUplink(payload, fPort);
   if (phyPayload) {
     const uplinkFreq = getRandomUplinkChannel(frequencyPlan);
+    const cnt = deviceState.fCntUp - 1;
+    const txt = getPrintableBuf(payload);
 
     console.log(
-      `Sending uplink (FCnt: ${
-        deviceState.fCntUp - 1
-      }, FPort: ${fPort}, Freq: ${uplinkFreq} MHz): ${getPrintableBuf(payload)}`
+      `Send uplink (FCnt: ${cnt}, FPort: ${fPort}, Freq: ${uplinkFreq} MHz): ${txt}`
     );
     sendPushData(
       phyPayload,
@@ -89,8 +89,8 @@ export async function _start() {
   console.log("LoRaWAN Device Simulator");
   console.log("========================");
   console.log(`Gateway: ${config.gatewayHost}:${config.gatewayPort}`);
-  console.log(`Device EUI: ${config.devEUI}`);
-  console.log(`App EUI: ${config.appEUI}`);
+  console.log(`Gateway EUI: ${config.gatewayEUI}`);
+  console.log(`Device  EUI: ${config.devEUI}`);
   console.log(
     `Frequency Plan: ${frequencyPlan.name} (${frequencyPlan.description})`
   );
@@ -106,11 +106,7 @@ export async function _start() {
   console.log("Sending Join Request...");
   const devNonce = Math.floor(Math.random() * 65536);
   deviceState.devNonce = devNonce;
-  const joinRequest = createJoinRequest(
-    config.devEUI,
-    config.appEUI,
-    devNonce
-  );
+  const joinRequest = createJoinRequest(config.devEUI, config.appEUI, devNonce);
   const joinFreq = getRandomUplinkChannel(frequencyPlan);
   sendPushData(joinRequest, -100, 5.0, joinFreq, frequencyPlan.defaultDatarate);
 
