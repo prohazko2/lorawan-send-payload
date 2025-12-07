@@ -100,9 +100,9 @@ export async function _start() {
   console.log("");
 
   sendPullData();
+  console.log("PULL_DATA sent, waiting 5 sec ...");
   await delay(5_000);
 
-  // Отправка Join Request
   console.log("Sending Join Request...");
   const devNonce = Math.floor(Math.random() * 65536);
   deviceState.devNonce = devNonce;

@@ -76,8 +76,8 @@ import { config } from "./src/config.ts";
 import { deviceState } from "./src/device-state.ts";
 
 export function generateUplink(): UplinkMessage {
-  const t = Math.random() * 256 - 128;
-  const h = Math.random() * 100;
+  const t = +(Math.random() * 256 - 128).toFixed(0);
+  const h = +(Math.random() * 100).toFixed(0);
 
   return {
     fPort: 2,
