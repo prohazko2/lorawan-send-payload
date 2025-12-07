@@ -74,6 +74,10 @@ export function processJoinAccept(data: Buffer): boolean {
     return false;
   }
 
+  if (config.debug.lora) {
+    console.log("processJoinAccept packet: ", packet.toString());
+  }
+
   const { AppSKey, NwkSKey } = lora.generateSessionKeys(
     appKey,
     packet.NetID!,
