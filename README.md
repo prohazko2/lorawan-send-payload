@@ -76,6 +76,9 @@ export function generateUplink(): UplinkMessage {
 
 Если файл `uplink.ts` не найден, будет использован генератор по умолчанию:
 ```ts
+import { config } from "./src/config.ts";
+import type { UplinkMessage } from "./src/types.ts";
+
 export function generateUplinkDefault(): UplinkMessage {
   return {
     fPort: config.uplinkFPort,
